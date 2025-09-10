@@ -7,21 +7,118 @@ const submit = async function( event ) {
   // remains to this day
   event.preventDefault()
   
-  const input = document.querySelector( "#yourname" ),
-        json = { yourname: input.value },
+  
+  const input = document.querySelector( "#idea" ),
+        json = { "idea": input.value },
         body = JSON.stringify( json )
+
+  const idea = document.getElementById("idea").value;
+  const reason = document.getElementById("reason").value;
+  const desire = document.getElementById("desire").value;
+
+  const newSubmission = {idea, reason, desire};
 
   const response = await fetch( "/submit", {
     method:"POST",
-    body 
-  })
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newSubmission)
+  });
 
-  const text = await response.text()
+  const fin = await response.json();
+  const safe = fin.safe;
 
-  console.log( "text:", text )
+  const tr = document.createElement("tr");
+
+  const tdIdea = document.createElement("td");
+  tdIdea.innerText = fin.idea;
+  tr.appendChild(tdIdea);
+
+  const tdReason = document.createElement("td");
+  tdReason.innerText = fin.reason;
+  tr.appendChild(tdReason);
+
+  const tdDesire = document.createElement("td");
+  tdDesire.innerText = fin.desire;
+  tr.appendChild(tdDesire);
+
+  const tdPriority = document.createElement("td");
+  tdPriority.innerText = makePriority(fin.reason, fin.desire);
+  tr.appendChild(tdPriority);
+
+  const tdButtons = document.createElement("td");
+
+  const delButton = document.createElement("button");
+  delButton.innerText = "remove";
+  delButton.onclick = function() {
+    fetch ("/delete", {
+      method: "POST",
+      body: JSON.stringify({safe})
+    }).then(function () {
+      tr.remove();
+    });
+  };
+
+  const editButton = document.createElement("button");
+  editButton.innerText = "edit";
+  editButton.onclick = function() {
+    const newIdea = prompt("new idea:", fin.idea);
+
+    const updatedData = {
+      safe: safe,
+      idea: newIdea
+    };
+
+    const responseUpdate = fetch ("/update", {
+      method: "POST",
+      body: JSON.stringify(updatedData)
+    }).then(function (responseUpdate) {
+      return responseUpdate.json();
+    }).then(function (updated) {
+      tdIdea.innerText = updated.idea;
+    });
+
+  };
+
+  tdButtons.appendChild(editButton);
+  tdButtons.appendChild(delButton);
+  tr.appendChild(tdButtons);
+
+  const table = document.querySelector(".sectionFour table");
+  table.appendChild(tr);
+
+  document.getElementById("idea").value = "";
+  //console.log( "text:", text )
+  
 }
 
+function makePriority(reason, desire) {
+  if (reason === "class") {
+
+    return "high"
+
+  } else if (reason === "portfolio") {
+
+    if (desire === "large") {
+      return "high"
+    } else {
+      return "meduim"
+    }
+
+  } else {
+
+    if (desire === "large") {
+      return "medium"
+    } else {
+      return "low"
+    }
+
+  }
+}
+
+
 window.onload = function() {
-   const button = document.querySelector("button");
+   const button = document.querySelector("#submit");
   button.onclick = submit;
 }

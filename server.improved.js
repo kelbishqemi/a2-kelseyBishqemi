@@ -9,9 +9,7 @@ const http = require( "http" ),
       port = 3000
 
 const appdata = [
-  { "model": "toyota", "year": 1999, "mpg": 23 },
-  { "model": "honda", "year": 2004, "mpg": 30 },
-  { "model": "ford", "year": 1987, "mpg": 14} 
+  { "idea": "", "reason": "", "desire": "" }
 ]
 
 const server = http.createServer( function( request,response ) {
@@ -40,12 +38,47 @@ const handlePost = function( request, response ) {
   })
 
   request.on( "end", function() {
-    console.log( JSON.parse( dataString ) )
+    const url = request.url;
+    const newData = JSON.parse(dataString);
 
-    // ... do something with the data here!!!
+    //let url = request.url.slice( 1 );
+    if(url == "/submit") {
 
-    response.writeHead( 200, "OK", {"Content-Type": "text/plain" })
-    response.end("test")
+    console.log( JSON.parse( dataString ) );
+
+    appdata.push(newData);
+
+    response.writeHead( 200, "OK", {"Content-Type": "application/json" });
+
+    const safe = appdata.length - 1;
+    newData.safe = safe;
+    response.end(JSON.stringify(newData));
+      
+    } else if (url == "/update") {
+      
+      const updateData = JSON.parse(dataString)
+      const safe = updateData.safe;
+
+      if (Number.isInteger(safe) && appdata[safe]) {
+        appdata[safe] = {
+          idea: updateData.idea
+        };
+      }
+
+      response.writeHead( 200, "OK", {"Content-Type": "application/json" });
+      response.end(JSON.stringify(appdata[safe]));
+    } else if (url == "/delete") {
+      const safe = newData.safe;
+
+      if (Number.isInteger(safe) && appdata[safe]) {
+        appdata.splice(safe, 1);
+      }
+
+      response.writeHead( 200, "OK", {"Content-Type": "text/plain" });
+      response.end(JSON.stringify(appdata[safe]));
+    }
+
+    
   })
 }
 

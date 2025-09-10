@@ -1,18 +1,69 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>CS4241 Assignment 2</title>
+    <title>CS4241 Assignment 2 -- Drawing Ideas List</title>
     <meta charset="utf-8">
     <script src="js/main.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     
     <!-- get rid of favicon error -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
   <body>
-    <form>
-      <input type="text" id="yourname" value="your name here">
-      <button>submit</button>
-    </form>
+
+    <div class="container">
+
+      <div class="header"><h2>Fill out the Following and Determine What to Draw!</h2></div>
+
+      <div class="sectionOne">
+        <h3>What do you want to draw?</h3>
+        <br>
+        <form>
+          <input type="text" id="idea" value="">
+        </form>
+      </div>
+
+      <div class="sectionTwo">
+        <h3>What's the drawing for?</h3>
+        <form>
+          <select name="reason" id="reason">
+            <option value="class">For Class</option>
+            <option value="portfolio">For my Portfolio</option>
+            <option value="personal">For Myself</option>
+          </select>
+        </form>
+      </div>
+
+      <div class="sectionThree">
+        <h3>How much do you want to draw it?</h3>
+        <form>
+          <select name="desire" id="desire">
+            <option value="small">Don't Really Want To</option>
+            <option value="medium">I'm Willing</option>
+            <option value="large">Really Want To</option>
+          </select>
+        </form>
+      </div>
+
+      <div class="button" id="submitButton">
+        <br><br>
+        <button type="button" id="submit">Add to List</button>
+      </div>
+    
+      <div class="sectionFour" id="results">
+        <br>
+        <table>
+          <tr>
+            <th>Idea</th>
+            <th>Reason</th>
+            <th>Desire</th>
+            <th>Priority</th>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
   </body>
 </html>

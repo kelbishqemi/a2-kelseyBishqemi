@@ -1,4 +1,33 @@
 body {
-  background:black;
+  background:rgb(89, 104, 105);
   color:white;
+}
+
+.container > div.header, div.sectionOne, div.sectionTwo, div.sectionThree {
+  text-align: center;
+}
+
+#submitButton {
+  font-family: "Fuzzy Bubbles", sans-serif;
+  text-align: center;
+  color: rgb(14, 28, 16);
+}
+
+h2, h3, th, td {
+  font-family: "Fuzzy Bubbles", sans-serif;
+  color: rgb(123, 214, 158);
+  background-color: rgb(89, 104, 105);
+  text-align: center;
+}
+
+option, select, input {
+  font-family: "Fuzzy Bubbles", sans-serif;
+  color: rgb(14, 28, 16);
+  background-color: rgb(198, 231, 203);
+  text-align: center;
+}
+
+table {
+  border: 2px solid rgb(198, 231, 203);
+  width: 100%;
 }
