@@ -1,107 +1,86 @@
-const http = require( "http" ),
-      fs   = require( "fs" ),
-      // IMPORTANT: you must run `npm install` in the directory for this assignment
-      // to install the mime library if you"re testing this on your local machine.
-      // However, Glitch will install it automatically by looking in your package.json
-      // file.
-      mime = require( "mime" ),
-      dir  = "public/",
-      port = 3000
+require('dotenv').config()
 
-const appdata = [
-  { "idea": "", "reason": "", "desire": "" }
-]
 
-const server = http.createServer( function( request,response ) {
-  if( request.method === "GET" ) {
-    handleGet( request, response )    
-  }else if( request.method === "POST" ){
-    handlePost( request, response ) 
+// server
+const express = require('express'),
+    app = express();
+
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+
+app.use( express.static( 'public' ) )
+app.use(express.json())
+
+const uri = `mongodb+srv://${process.env.USERN}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=myCluster`;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
   }
+});
+
+let collection = null
+
+async function run() {
+  try {
+    await client.connect()  
+    collection = client.db("appdata").collection("ideas")
+
+    // Send a ping to confirm a successful connection
+    await client.db("appdata").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+ } catch (err) {
+    console.log("err:", err)
+    client.close()
+ }
+}
+
+app.use( (req,res,next) => {
+    if( collection !== null ) {
+        next()
+    } else {
+        res.status( 503 ).send()
+    }
 })
 
-const handleGet = function( request, response ) {
-  const filename = dir + request.url.slice( 1 ) 
-
-  if( request.url === "/" ) {
-    sendFile( response, "public/index.html" )
-  }else{
-    sendFile( response, filename )
-  }
-}
-
-const handlePost = function( request, response ) {
-  let dataString = ""
-
-  request.on( "data", function( data ) {
-      dataString += data 
-  })
-
-  request.on( "end", function() {
-    const url = request.url;
-    const newData = JSON.parse(dataString);
-
-    //let url = request.url.slice( 1 );
-    if(url == "/submit") {
-
-    console.log( JSON.parse( dataString ) );
-
-    appdata.push(newData);
-
-    response.writeHead( 200, "OK", {"Content-Type": "application/json" });
-
-    const safe = appdata.length - 1;
-    newData.safe = safe;
-    response.end(JSON.stringify(newData));
-      
-    } else if (url == "/update") {
-      
-      const updateData = JSON.parse(dataString)
-      const safe = updateData.safe;
-
-      if (Number.isInteger(safe) && appdata[safe]) {
-        appdata[safe] = {
-          idea: updateData.idea
-        };
-      }
-
-      response.writeHead( 200, "OK", {"Content-Type": "application/json" });
-      response.end(JSON.stringify(appdata[safe]));
-    } else if (url == "/delete") {
-      const safe = newData.safe;
-
-      if (Number.isInteger(safe) && appdata[safe]) {
-        appdata.splice(safe, 1);
-      }
-
-      response.writeHead( 200, "OK", {"Content-Type": "text/plain" });
-      response.end(JSON.stringify(appdata[safe]));
+app.get("/docs", async (req, res) => {
+    if (collection !== null) {
+        const docs = await collection.find({}).toArray()
+        res.json( docs )
     }
+})
 
-    
-  })
-}
+/*app.post( '/submit', ( req, res ) => {
+  // our request object now has a 'json' field in it from our previous middleware
+  res.writeHead( 200, { 'Content-Type': 'application/json'})
+  res.end( req.json )
+}) */
 
-const sendFile = function( response, filename ) {
-   const type = mime.getType( filename ) 
+app.post( '/submit', async (req,res) => {
+    const result = await collection.insertOne( req.body )
+    res.json( result )
+})
 
-   fs.readFile( filename, function( err, content ) {
+app.post( '/delete', async (req,res) => {
+    const result = await collection.deleteOne({ 
+        _id: new ObjectId( req.body._id ) 
+    })
+  
+    res.json( result )
+})
 
-     // if the error = null, then we"ve loaded the file successfully
-     if( err === null ) {
+app.post( '/update', async (req,res) => {
+    const result = await collection.updateOne(
+        { _id: new ObjectId( req.body._id ) },
+        { $set:{ idea:req.body.idea } }
+    )
 
-       // status code: https://httpstatuses.com
-       response.writeHeader( 200, { "Content-Type": type })
-       response.end( content )
+    res.json( result )
+})
 
-     }else{
+run().catch(console.dir);
 
-       // file not found, error code 404
-       response.writeHeader( 404 )
-       response.end( "404 Error: File Not Found" )
-
-     }
-   })
-}
-
-server.listen( process.env.PORT || port )
+const listener = app.listen( process.env.PORT || 3000 )

@@ -4,10 +4,19 @@
   "description": "",
   "author": "",
   "scripts": {
-    "start": "node server.improved.js"
+    "start": "node --env-file=.env server.improved.js"
   },
   "dependencies": {
+    "bootstrap": "^5.3.8",
+    "connect-sqlite3": "^0.9.16",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "mime": "^2.6.0",
-    "passport-github2": "^0.1.12"
+    "mongodb": "^6.19.0",
+    "morgan": "^1.10.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "passport-openidconnect": "^0.1.2"
   }
 }

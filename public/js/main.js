@@ -8,15 +8,17 @@ const submit = async function( event ) {
   event.preventDefault()
   
   
-  const input = document.querySelector( "#idea" ),
+ /* const input = document.querySelector( "#idea" ),
         json = { "idea": input.value },
-        body = JSON.stringify( json )
+        body = JSON.stringify( json ) */
 
   const idea = document.getElementById("idea").value;
   const reason = document.getElementById("reason").value;
   const desire = document.getElementById("desire").value;
 
   const newSubmission = {idea, reason, desire};
+
+  async function loadUp() {
 
   const response = await fetch( "/submit", {
     method:"POST",
@@ -27,24 +29,25 @@ const submit = async function( event ) {
   });
 
   const fin = await response.json();
-  const safe = fin.safe;
+  // const safe = fin.safe;
+  const _id = fin.insertedId;
 
   const tr = document.createElement("tr");
 
   const tdIdea = document.createElement("td");
-  tdIdea.innerText = fin.idea;
+  tdIdea.innerText = idea;
   tr.appendChild(tdIdea);
 
   const tdReason = document.createElement("td");
-  tdReason.innerText = fin.reason;
+  tdReason.innerText = reason;
   tr.appendChild(tdReason);
 
   const tdDesire = document.createElement("td");
-  tdDesire.innerText = fin.desire;
+  tdDesire.innerText = desire;
   tr.appendChild(tdDesire);
 
   const tdPriority = document.createElement("td");
-  tdPriority.innerText = makePriority(fin.reason, fin.desire);
+  tdPriority.innerText = makePriority(reason, desire);
   tr.appendChild(tdPriority);
 
   const tdButtons = document.createElement("td");
@@ -54,7 +57,8 @@ const submit = async function( event ) {
   delButton.onclick = function() {
     fetch ("/delete", {
       method: "POST",
-      body: JSON.stringify({safe})
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({_id})
     }).then(function () {
       tr.remove();
     });
@@ -63,16 +67,17 @@ const submit = async function( event ) {
   const editButton = document.createElement("button");
   editButton.innerText = "edit";
   editButton.onclick = function() {
-    const newIdea = prompt("new idea:", fin.idea);
+    const newIdea = prompt("new idea:", idea);
 
-    const updatedData = {
+    /* const updatedData = {
       safe: safe,
       idea: newIdea
-    };
+    }; */
 
     const responseUpdate = fetch ("/update", {
       method: "POST",
-      body: JSON.stringify(updatedData)
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({id_: _id, idea: newIdea})
     }).then(function (responseUpdate) {
       return responseUpdate.json();
     }).then(function (updated) {
@@ -84,10 +89,14 @@ const submit = async function( event ) {
   tdButtons.appendChild(editButton);
   tdButtons.appendChild(delButton);
   tr.appendChild(tdButtons);
+  
 
   const table = document.querySelector(".sectionFour table");
   table.appendChild(tr);
 
+  }
+
+  await loadUp();
   document.getElementById("idea").value = "";
   //console.log( "text:", text )
   
