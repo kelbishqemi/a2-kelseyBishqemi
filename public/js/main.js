@@ -96,7 +96,7 @@ const submit = async function( event ) {
 
   }
 
-  await loadUp();
+
   document.getElementById("idea").value = "";
   //console.log( "text:", text )
   
@@ -128,6 +128,7 @@ function makePriority(reason, desire) {
 
 
 window.onload = function() {
-   const button = document.querySelector("#submit");
+  loadUp();
+  const button = document.querySelector("#submit");
   button.onclick = submit;
 }
