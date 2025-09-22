@@ -6,63 +6,73 @@
     <meta name="description" content="Drawing Idea List">
     <meta name="keywords" content="List, Drawing">
     <meta name="author" content="Kelsey">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="js/main.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="css/main.css"> -->
     
     <!-- get rid of favicon error -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   </head>
-  <body>
+  <body class="bg-success">
 
     <div class="container">
 
-      <div class="header"><h2>Fill out the Following and Determine What to Draw!</h2></div>
+      <div class="header"><h2 class="text-center">Fill out the Following and Determine What to Draw!</h2></div>
 
       <div class="sectionOne">
-        <h3>What do you want to draw?</h3>
+        <h3 class="text-center">What do you want to draw?</h3>
         <br>
-        <form>
+        <form class="text-center">
           <input type="text" id="idea" value="">
+          <label for="idea">Idea textbox</label>
         </form>
       </div>
 
       <div class="sectionTwo">
-        <h3>What's the drawing for?</h3>
-        <form>
+        <h3 class="text-center">What's the drawing for?</h3>
+        <form class="text-center">
           <select name="reason" id="reason">
+          <label for="reason">Reason</label>
             <option value="class">For Class</option>
+            <label for="class">For Class</label>
             <option value="portfolio">For my Portfolio</option>
+            <label for="portfolio">For my Portfolio</label>
             <option value="personal">For Myself</option>
+            <label for="personal">For Myself</label>
           </select>
         </form>
       </div>
 
       <div class="sectionThree">
-        <h3>How much do you want to draw it?</h3>
-        <form>
+        <h3 class="text-center">How much do you want to draw it?</h3>
+        <form class="text-center">
           <select name="desire" id="desire">
+            <label for="desire">Desire</label>
             <option value="small">Don't Really Want To</option>
+            <label for="small">Don't Really Want To</label>
             <option value="medium">I'm Willing</option>
+            <label for="medium">I'm Willing'</label>
             <option value="large">Really Want To</option>
+            <label for="large">Really Want To</label>
           </select>
         </form>
       </div>
 
       <div class="button" id="submitButton">
         <br><br>
-        <button type="button" id="submit">Add to List</button>
+        <button type="button" id="submit" class="btn btn-default btn-block">Add to List</button>
       </div>
     
       <div class="sectionFour" id="results">
         <br>
-        <table>
+        <table class="table table-striped">
           <tr>
-            <th>Idea</th>
-            <th>Reason</th>
-            <th>Desire</th>
-            <th>Priority</th>
+            <th id="tableIdea">Idea</th>
+            <th id="tableReason">Reason</th>
+            <th id="tableDesire">Desire</th>
+            <th id="tablePriority">Priority</th>
           </tr>
         </table>
       </div>
